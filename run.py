@@ -53,9 +53,9 @@ def runPGDL2attack_secml(attack, parameters, clfs, tr_dataset, ts_dataset, folde
             print(f"Security evaluation for {p} param model already computed. All set for robustness plots")
     
 
-def runAutoAttack_pytorch(attack, parameters, clfs, sec_eval_folder, epsilons, test_loader):
-    
-    l = [x for (x, y) in test_loader]
+def runAutoAttack_pytorch(attack, parameters, clfs, sec_eval_folder, epsilons, test_loader, batch_size = 100):
+    print("batchsize: ", batch_size)
+    l = [x for (x, y) in test_loader]   
     x_test = torch.cat(l, 0)
     l = [y for (x, y) in test_loader]
     y_test = torch.cat(l, 0)
