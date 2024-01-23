@@ -1,0 +1,1 @@
+nohup python run.py --ds mnist --model cnn --attack autoattack &
