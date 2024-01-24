@@ -1,12 +1,17 @@
 
+import matplotlib.pyplot as plt
 from secml.ml.peval.metrics import CMetricAccuracy
 from secml.figure import CFigure
 from secml.array import CArray
 from secml.adv.seceval import CSecEval, CSecEvalData
+from secml.array import CArray
+from secml.data import CDataset
+from secml.ml import CClassifier
 from helper import plot_performance
 from folder import PLOT_FOLDER
 
 def plot_base_performance(clfs, tr_dataset, ts_dataset, ds, network):
+    print("ORIGINAL y in plot_base_performance: ", ts_dataset.Y)
     parameters = [sum([i.numel() for i in list(clf.model.parameters())]) for clf in clfs]
     tr_acc, ts_acc = plot_performance(clfs, tr_dataset, ts_dataset, CArray(parameters), "Network parameters",
                                 title=f"Error rate of {network} on {ds} by varying numbers of parameters",
@@ -67,3 +72,59 @@ def plot_robustness_performance(ds_name, network, attack, parameters, folder_pre
     fig.sp.grid(linestyle='--')
     fig.sp.legend(framealpha = 0.5)
     fig.savefig(str(PLOT_FOLDER /f"sec_eval_{ds_name}-{network}-{attack}.pdf"))
+
+
+def performance_score_model(classifier: CClassifier, tr_dataset: CDataset, ts_dataset: CDataset):
+    tr_y_pred = classifier.predict(tr_dataset.X)
+    ts_y_pred = classifier.predict(ts_dataset.X)
+    tr_acc = CMetricAccuracy().performance_score(tr_dataset.Y, tr_y_pred)
+    ts_acc = CMetricAccuracy().performance_score(ts_dataset.Y, ts_y_pred)
+    tr_error = 1 - tr_acc
+    ts_error = 1 - ts_acc
+    return tr_acc, ts_acc, tr_error, ts_error
+
+def test_models(classifiers, tr_dataset, ts_dataset):
+    ts_errors = []
+    tr_errors = []
+    tr_accuracy = []
+    ts_accuracy = []
+    # clf_perf = {}
+    for c in classifiers:
+        tr_acc, ts_acc, tr_err, ts_err = performance_score_model(c, tr_dataset, ts_dataset)
+        # param = sum([i.numel() for i in list(c.model.parameters())])
+        # clf_perf[param]['tr_acc'] = tr_acc
+        # clf_perf[param]['ts_acc'] = ts_acc
+        tr_accuracy.append(tr_acc)
+        ts_accuracy.append(ts_acc)
+        ts_errors.append(ts_err)
+        tr_errors.append(tr_err)
+    tr_accuracy = CArray(tr_accuracy)
+    ts_accuracy = CArray(ts_accuracy)
+    ts_errors = CArray(ts_errors)
+    tr_errors = CArray(tr_errors)
+
+    return tr_errors, ts_errors, tr_accuracy, ts_accuracy
+
+def plot_performance(classifiers,
+                             tr_dataset: CDataset,
+                             ts_dataset: CDataset,
+                             x_axis: CArray,
+                             xlabel: str = "",
+                             title: str = "",
+                             savefig: str = None):
+    
+    print("classifier: ", type(classifiers))
+    print("tr_dataset: ", type(tr_dataset))
+    print("ts_dataset: ", type(ts_dataset))
+    tr_error, ts_error, tr_accuracy, ts_accuracy = test_models(classifiers, tr_dataset, ts_dataset)
+    plt.plot(x_axis.tondarray(), tr_error.tondarray(), label="tr error", c='r')
+    plt.plot(x_axis.tondarray(), ts_error.tondarray(), label="ts error", c='b')
+    plt.xlabel(xlabel)
+    plt.ylabel("Errors")   
+    plt.title(title)
+    plt.legend()
+    if savefig:
+        plt.savefig(str(PLOT_FOLDER / f"{savefig}.jpg"))
+    plt.show()
+
+    return tr_accuracy, ts_accuracy

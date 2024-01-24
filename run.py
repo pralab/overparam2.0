@@ -126,11 +126,10 @@ if __name__ == "__main__":
         solver_params, noise_type, lb, ub, y_target = get_pgd_attack_hyperparams(ds_name)
         if model_name == "cnn":
             expansions = [1, 2, 4, 6, 8, 10, 15, 20, 25, 30]
+            epsilons = np.linspace(0.3, 3.0, 5)
             if attack == "pgdl2":
-                epsilons = np.linspace(0.3, 3.0, 5)
                 sec_eval_folder = PGDL2_CNN_MNIST
             elif attack == "autoattack":
-                epsilons = np.linspace(0.05, 2.0, 5)
                 sec_eval_folder = AA_CNN_MNIST
         elif model_name == "fcrelu":
             epsilons = np.linspace(0.1, 1.5, 5)
@@ -144,9 +143,9 @@ if __name__ == "__main__":
         test_subset = config.CIFAR10_TESTSIZE
         solver_params, noise_type, lb, ub, y_target = get_pgd_attack_hyperparams()
     
-    print(f"[INFO] Loading {ds_name} in pytorch...")
+    print(f"[INFO] Loading {ds_name} in pytorch ...")
     dataset = load_pytorch_dataset(SEED, ds_name, train_subset, test_subset, batch_size, ds_normalization=False)
-    print(f"[INFO] loding {model_name} for given model name...")
+    print(f"[INFO] loding {model_name} structure ...")
     model_folder, clf_names, model = get_models_and_path(ds_name, model_name, expansions)
     print("[INFO] Converting pytorch dataset to secml format...")
     tr_secml = pytorch_ds_to_secml_ds(dataset.train_loader, batch_size)
