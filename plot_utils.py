@@ -19,6 +19,55 @@ def plot_base_performance(clfs, tr_dataset, ts_dataset, ds, network):
     print(f"BASE PERFORMANCE\nTrain accuracy: {tr_acc},\t Testing accuracy: {ts_acc}")
     return tr_acc, ts_acc
 
+def plot_base_performance_ambrastyle(clfs, tr_dataset, ts_dataset, ds, network, fig_title, xscale_base):
+    parameters = [sum([i.numel() for i in list(clf.model.parameters())]) for clf in clfs]
+    tr_err, ts_err, tr_acc, ts_acc = test_models(clfs, tr_dataset, ts_dataset)
+    fig = CFigure(3, 5)
+    tr_std = tr_acc.std(axis=0).ravel()
+    print("tr std: ", tr_std)
+    low_tr_acc = tr_err - tr_std
+    high_tr_acc = tr_err + tr_std
+
+    ts_std = ts_acc.std(axis=0).ravel()
+    print("ts std: ", ts_std)
+    low_ts_acc = ts_err - ts_std
+    high_ts_acc = ts_err + ts_std
+
+    reduced_tr_error = tr_err
+    print("reduced tr error ", reduced_tr_error)
+    fig.sp.plot(parameters, reduced_tr_error,
+             "-", label="train", marker='o')
+    
+    reduced_ts_error = ts_err
+    fig.sp.plot(parameters, reduced_ts_error,
+             "-", label="test", marker='o')
+    
+    # plot standard deviation
+    fig.sp.fill_between(parameters, low_tr_acc,
+                        high_tr_acc, alpha=0.5)
+    fig.sp.fill_between(parameters, low_ts_acc,
+                        high_ts_acc, alpha=0.5)
+
+    print("number of param reduced ", parameters)
+
+    fig.sp.title(fig_title)
+    fig.sp.ylabel("Error rate")
+    fig.sp.xlabel("Number of parameters")
+
+    print(xscale_base, xscale_base)
+    # fig.sp.xscale("log", basex=xscale_base)
+
+    fig.subplots_adjust(left=0.15, right=0.98,
+                        bottom=0.18, top=0.93, wspace=0.2, hspace=0.2)
+
+    fig.sp.grid(linestyle='--')
+
+    fig.sp.legend(framealpha = 0.5)
+
+    fig.savefig(str(PLOT_FOLDER /f"base_perf_{ds}-{network}.pdf"))
+    return tr_acc, ts_acc
+
+
 def plot_robustness_performance(ds_name, network, attack, parameters, folder_pretrained_model, base_ts_acc):
     fig = CFigure(3, 5, fontsize=8, markersize=3)
     metric = CMetricAccuracy()
@@ -35,20 +84,13 @@ def plot_robustness_performance(ds_name, network, attack, parameters, folder_pre
         epsilons = sec_eval_data.param_values
         y_true = sec_eval_data.Y
         if ds_name == "mnist":
-            print("in mnist")
             if attack == "autoattack":
-                print("in mnist AA")
                 att_pred = sec_eval_data.Y_pred[0]  
             else:
                 att_pred = sec_eval_data.Y_pred
         full_range_acc = base_ts_acc[i].tolist()
 
         print("epsilons: ", sec_eval_data.param_values)
-        # print("y_true: ", y_true)
-        # print("att_pred: ", att_pred)
-        # print("first vector of att_pred: ", att_pred[0])
-        # print("type att_pred[0]: ", type(att_pred[0]))
-        # print("epsilons.size: ", epsilons.size)
         
         for eps in range(epsilons.size):
             full_range_acc.append(metric.performance_score(y_true=y_true, y_pred=att_pred[eps]))
