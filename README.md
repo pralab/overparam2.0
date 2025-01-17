@@ -22,6 +22,6 @@ Model type: CNN and FC-RELU for MNIST, Resnet for Cifar10\
 Attack type: PGD-L2 and AutoAttac
 
 ### Command
-python run.py --ds mnist --model cnn --attack pgdl2\
+`python run.py --ds mnist --model cnn --attack pgdl2`\
 or \
-python run.py --ds cifar10 --model resnet --attack pgdl2\
+`python run.py --ds cifar10 --model resnet --attack pgdl2`\
