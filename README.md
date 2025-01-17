@@ -14,6 +14,9 @@ The Python package setuptools manages the setup process. Be sure to obtain the l
 Once the environment is set up, use following commands to install required packages:\
 `pip install -r requirements.txt --no-index --find-links file:///tmp/packages`
 
+
+This script uses PGD L2 attack from `secml` library and AutoAttack from `pytorch` library. The repo contains the necessary conversion.
+
 ## Run experiments
 
 ### Arguments
