@@ -17,8 +17,8 @@ eterized networks against adversarial examples. However, unlike the previous wor
 we also evaluate the considered attack’s reliability to support the results’ veracity. Our
 results show that over-parameterized networks are robust against adversarial attacks as
 opposed to their under-parameterized counterparts.\
-**Authors** Zhang Chena(Northwestern Polytechnical University, Xi’an, China), Luca Demetrio(University of Cagliari, University of Genova), Srishti Gupta(University of Cagliari, University of Roma La Sapienza), Xiaoyi Feng(Northwestern Polytechnical University, Xi’an, China), Zhaoqiang Xia(Northwestern Polytechnical University, Xi’an, China), Antonio Emanuele Cina(University of Cagliari, University of Genova), Maura Pintor(University of Cagliari), Luca Oneto(University of Cagliari, University of Genova), Ambra Demontis(University of Cagliari), Battista Biggio (University of Cagliari), Fabio Roli(University of Cagliari, University of Genova)
-\\
+**Authors** Zhang Chena(Northwestern Polytechnical University, Xi’an, China), Luca Demetrio(University of Cagliari, University of Genova), Srishti Gupta(University of Cagliari, University of Roma La Sapienza), Xiaoyi Feng(Northwestern Polytechnical University, Xi’an, China), Zhaoqiang Xia(Northwestern Polytechnical University, Xi’an, China), Antonio Emanuele Cina(University of Cagliari, University of Genova), Maura Pintor(University of Cagliari), Luca Oneto(University of Cagliari, University of Genova), Ambra Demontis(University of Cagliari), Battista Biggio (University of Cagliari), Fabio Roli(University of Cagliari, University of Genova)\
+
 For further details, please refer to our [paper](https://arxiv.org/abs/2406.10090)
 
 ## Installation Guide
