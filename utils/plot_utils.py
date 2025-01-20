@@ -8,7 +8,8 @@ from secml.array import CArray
 from secml.data import CDataset
 from secml.ml import CClassifier
 from utils.helper import plot_performance
-from utils.folder import PLOT_FOLDER
+from folder import PLOT_FOLDER
+import numpy as np
 
 def plot_base_performance(clfs, tr_dataset, ts_dataset, ds, network):
     # print("ORIGINAL y in plot_base_performance: ", ts_dataset.Y)
@@ -37,24 +38,47 @@ def plot_base_performance_ambrastyle(clfs, tr_dataset, ts_dataset, ds, network, 
     high_ts_acc = ts_err + ts_std
 
     reduced_tr_error = tr_err
+    print("x-axis: ", parameters)
     print("reduced tr error ", reduced_tr_error)
 
     interpolation_point = train_subset
-
-    fig.sp.plot(parameters, reduced_tr_error,
-             "-", label="train", marker='o')
     
     reduced_ts_error = ts_err
-    fig.sp.plot(parameters, reduced_ts_error,
-             "-", label="test", marker='o')
+    if ds == "cifar10":
+        x_ax = np.logspace(0, 7, 10)
+        fig.sp.semilogx(x_ax, reduced_tr_error,
+                "-", label="train", marker='o')
+        fig.sp.semilogx(x_ax, reduced_ts_error,
+                "-", label="test", marker='o')
+    elif ds == "mnist":
+        x_ax = np.logspace(0, 5, 10)
+        fig.sp.semilogx(x_ax, reduced_tr_error,
+                 "-", label="train", marker='o')
+        fig.sp.semilogx(x_ax, reduced_ts_error,
+                "-", label="test", marker='o')
+    
+    
+
     # add vertical line at interpolation point
     # fig.sp.axvline(x=interpolation_point, color='black', linestyle='--', linewidth=1)
     fig.sp.plot([interpolation_point, interpolation_point], [0, max(ts_err)], 'k--')
+    # fig.sp.xticks(new_ticks)
+
+    if ds == "cifar10":
+        fig.sp.xticks(CArray([1e2, 1e3, 20000, 1e6, 1e7]))
+        fig.sp.xticklabels(["1e2", "1e3", "20000",  "1e6", "1e7"])
+    elif ds =="mnist":
+        fig.sp.xticks(CArray([1e2, 1e3, 3000, 1e4,  1e5]))
+        fig.sp.xticklabels(["1e2", "1e3", "3000", "1e4",  "1e5"])
+        
+    fig.sp.tick_params('x', direction='out', labelsize='small')
+    # new_ticks = sorted(list(current_ticks) + [interpolation_point])
+    # fig.sp.xticks(current_ticks)
     
     # plot standard deviation
-    fig.sp.fill_between(parameters, low_tr_acc,
+    fig.sp.fill_between(x_ax, low_tr_acc,
                         high_tr_acc, alpha=0.5)
-    fig.sp.fill_between(parameters, low_ts_acc,
+    fig.sp.fill_between(x_ax, low_ts_acc,
                         high_ts_acc, alpha=0.5)
 
     print("number of param ", parameters)
@@ -64,18 +88,16 @@ def plot_base_performance_ambrastyle(clfs, tr_dataset, ts_dataset, ds, network, 
     fig.sp.xlabel("Number of parameters")
 
     print(xscale_base, xscale_base)
-    # fig.sp.xscale("log", basex=xscale_base)
+    # fig.sp.xscale("symlog", basex=xscale_base)
 
-    # fig.subplots_adjust(left=0.15, right=0.98,
-    #                     bottom=0.18, top=0.93, wspace=0.2, hspace=0.2)
     
     fig.subplots_adjust(bottom=0.18, top=0.93, wspace=0.2, hspace=0.2)
 
-    fig.sp.grid(linestyle='--')
+    fig.sp.grid()
 
     fig.sp.legend(framealpha = 0.5)
-
     fig.savefig(str(PLOT_FOLDER /f"base_perf_{ds}-{network}.pdf"))
+
     return tr_acc, ts_acc
 
 

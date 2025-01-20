@@ -11,7 +11,7 @@ from utils.data_utils import load_pytorch_dataset, pytorch_ds_to_secml_ds
 from utils.model_utils import get_models_and_path, pretrain_secml, get_pgd_attack_hyperparams
 from utils.plot_utils import plot_base_performance, plot_robustness_performance, plot_base_performance_ambrastyle
 import utils.config as config
-from utils.folder import PGDL2_CNN_MNIST, AA_CNN_MNIST, PGDL2_FCRELU_MNIST, AA_FCRELU_MNIST, PGDL2_RFF_CIFAR10, AA_RFF_CIFAR10, PGDL2_RESN_CIFAR10, AA_RESN_CIFAR10, PLOT_FOLDER
+from folder import PGDL2_CNN_MNIST, AA_CNN_MNIST, PGDL2_FCRELU_MNIST, AA_FCRELU_MNIST, PGDL2_RFF_CIFAR10, AA_RFF_CIFAR10, PGDL2_RESN_CIFAR10, AA_RESN_CIFAR10, PLOT_FOLDER
 
 """
 Sample command python run.py --ds mnist --model cnn --attack pgdl2 --train 20
@@ -126,7 +126,7 @@ if __name__ == "__main__":
         if ds_name == "mnist":
             epochs = config.EPOCH1
         elif ds_name == "cifar10":
-            epochs = config.EPOCH3
+            epochs = config.EPOCH5  # changed for rerun 18/01
 
     if ds_name == "mnist":
         input_shape = config.MNIST_INPUT_SHAPE
@@ -139,7 +139,7 @@ if __name__ == "__main__":
         if model_name == "cnn":
             epsilons = np.linspace(0.3, 3.0, 5)
             expansions = [1, 2, 4, 6, 8, 10, 15, 20, 25, 30]
-            # train_subset = config.MNIST_TRAINSIZE
+            train_subset = config.MNIST_TRAINSIZE
             fig_title_base_perf = "Performance on benign samples MNIST: CNN"
             if attack == "pgdl2":
                 sec_eval_folder = PGDL2_CNN_MNIST
@@ -148,7 +148,7 @@ if __name__ == "__main__":
         elif model_name == "fcrelu":
             epsilons = np.linspace(0.03, 2.5, 5)
             expansions = [4, 6, 8, 10, 15, 20, 25, 30, 35, 40]
-            # train_subset = config.MNIST_TRAINSIZE
+            train_subset = config.MNIST_TRAINSIZE
             fig_title_base_perf = "Performance on benign samples MNIST: FCRELU"
             if attack == "pgdl2":
                 sec_eval_folder = PGDL2_FCRELU_MNIST
@@ -172,6 +172,7 @@ if __name__ == "__main__":
         elif model_name == "resnet":
             epsilons = np.linspace(0.01, 0.3, 5)
             expansions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            # expansions = [-5, -2, 0, 1, 4, 5, 6, 7, 8, 9]
             train_subset = config.CIFAR10_TRAINSIZE
             fig_title_base_perf = "Performance on benign samples CIFAR10: ResNet"
             if attack == "pgdl2":
@@ -188,6 +189,7 @@ if __name__ == "__main__":
     print("[INFO] Converting pytorch dataset to secml format...")
     tr_secml = pytorch_ds_to_secml_ds(dataset.train_loader, batch_size)
     ts_secml = pytorch_ds_to_secml_ds(dataset.test_loader, batch_size)
+    print("ts_secml: ", tr_secml.X.shape)
     print("ts_secml: ", ts_secml.X.shape)
     print("[INFO] Pretraining/Loading existing network ...")
 
@@ -202,14 +204,14 @@ if __name__ == "__main__":
 
     print("[INFO] Attacking the model begins ...")
 
-    if attack == "pgdl2":
-        runPGDL2attack_secml(attack, parameters, clfs, tr_secml, ts_secml, sec_eval_folder, epsilons, solver_params, noise_type, lb, ub, y_target)
-        print(f"\n[INFO] Plotting security evaluation plots {ds_name}-{model} - {attack}...")
-        plot_robustness_performance(ds_name, model_name, attack, parameters, sec_eval_folder, ts_acc)
-    elif attack == "autoattack":
-        # runAutoAttack_pytorch(attack, parameters, clfs, sec_eval_folder, epsilons, dataset.test_loader)
-        print(f"\n[INFO] Plotting security evaluation plots {ds_name}-{model} - {attack}...")
-        plot_robustness_performance(ds_name, model_name, attack, parameters, sec_eval_folder, ts_acc)
+    # if attack == "pgdl2":
+    #     runPGDL2attack_secml(attack, parameters, clfs, tr_secml, ts_secml, sec_eval_folder, epsilons, solver_params, noise_type, lb, ub, y_target)
+    #     print(f"\n[INFO] Plotting security evaluation plots {ds_name}-{model} - {attack}...")
+    #     plot_robustness_performance(ds_name, model_name, attack, parameters, sec_eval_folder, ts_acc)
+    # elif attack == "autoattack":
+    #     runAutoAttack_pytorch(attack, parameters, clfs, sec_eval_folder, epsilons, dataset.test_loader)
+    #     print(f"\n[INFO] Plotting security evaluation plots {ds_name}-{model} - {attack}...")
+    #     plot_robustness_performance(ds_name, model_name, attack, parameters, sec_eval_folder, ts_acc)
 
     
     
