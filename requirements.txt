@@ -36,12 +36,12 @@ nvidia-cufft-cu12==11.0.2.54
 nvidia-curand-cu12==10.3.2.106
 nvidia-cusolver-cu12==11.4.5.107
 nvidia-cusparse-cu12==12.1.0.106
-nvidia-nccl-cu12==2.18.1
+nvidia-nccl-cu12==2.19.3
 nvidia-nvjitlink-cu12==12.3.101
 nvidia-nvtx-cu12==12.1.105
 packaging @ file:///croot/packaging_1693575174725/work
 pandas==2.0.3
-Pillow==10.1.0
+pillow==10.3.0
 platformdirs @ file:///croot/platformdirs_1692205439124/work
 pooch @ file:///croot/pooch_1695850093751/work
 pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
@@ -59,12 +59,12 @@ six==1.16.0
 smmap==5.0.1
 sympy @ file:///croot/sympy_1701397643339/work
 threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
-torch==2.1.1
+torch==2.2.0
 torchvision==0.16.1
 tqdm @ file:///croot/tqdm_1679561862951/work
 tqdm-batch==0.1.0
-triton==2.1.0
-typing_extensions @ file:///croot/typing_extensions_1690297465030/work
+triton==2.2.0
+typing_extensions==4.12.2
 tzdata==2023.3
 urllib3 @ file:///croot/urllib3_1698257533958/work
 zipp==3.17.0
